@@ -753,10 +753,11 @@ angular.module('app.services', [])
               if (data.success === true)
               {
                 self.setReservedScheduleID(null);
-                def.resolve();
+                def.resolve(data);
               }else{
                 def.reject(JSON.stringify(data));
               }
+
             })
             .error(function(errRes, status, headers, config){
               def.reject(errRes);
@@ -764,7 +765,9 @@ angular.module('app.services', [])
         },function(errRes){
           def.reject(errRes);
         });
+
         return def.promise;
+
       };
 
     self.updateSubject = function(id, _date, start, end, subject){
