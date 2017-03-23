@@ -34,6 +34,7 @@ angular.module('app.factories', [])
 		startMeeting: "confirmschedule",
 		endMeeting:"endschedule",
     updateReservation: "updatereservation",
+    addAttendee: "addAttendee",
 		cancelMeeting:"cancelschedule",
     extendMeeting: "extendmeeting",
 		searchRoom: "search",

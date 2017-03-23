@@ -182,7 +182,8 @@ app.controller('ReservationCtrl', function ($rootScope, $scope, $q, $timeout, Ro
   $scope.loadReservations();
 
 }).controller('ReservationDetailCtrl', function ($scope, $state, $stateParams, $ionicPopup, $window,
-                                                 $ionicActionSheet, $timeout, $ionicNavBarDelegate, RoomService, AppService, MaskFac) {
+                                                 $ionicActionSheet, $timeout, $ionicNavBarDelegate,
+                                                 RoomService, AppService, MaskFac, $ionicModal) {
 
   // Get data upon scanning QR. If there is no star or end, then the data comes from parent reservations view
   // String Format from QR -> roomID,start or end --> 1100,start or 1100,end
@@ -451,7 +452,7 @@ app.controller('ReservationCtrl', function ($rootScope, $scope, $q, $timeout, Ro
     } else {
       actionSheetConfig = {
         titleText: 'Manage Reservation',
-        buttons: [{text: '<b>Start Reservation</b>'}, {text: '<b>Update Reservation</b>'}],
+        buttons: [{text: '<b>Start Reservation</b>'}, {text: '<b>Update Reservation</b>'}, {text: '<b>Add Attendees</b>'}],
         buttonClicked: function (index) {
           switch (index) {
             case 0:
@@ -461,6 +462,9 @@ app.controller('ReservationCtrl', function ($rootScope, $scope, $q, $timeout, Ro
               break;
             case 1:
               updateReservation($scope.meeting);
+              break;
+            case 2:
+              editAttendees();
               break;
           }
           ;
@@ -481,6 +485,62 @@ app.controller('ReservationCtrl', function ($rootScope, $scope, $q, $timeout, Ro
 
     }
     var hideSheet = $ionicActionSheet.show(actionSheetConfig);
+  };
+
+  $scope.attendeeList = [];
+  $scope.attendee = {
+    email: ''
+  };
+
+  $ionicModal.fromTemplateUrl('modal.html', function($ionicModal) {
+    $scope.modal = $ionicModal;
+  }, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+
+  function editAttendees() {
+    $scope.modal.show();
+  }
+
+  $scope.addAttendees = function() {
+    if($scope.attendeeList.length !== 0) {
+      MaskFac.loadingMask(true, 'Adding');
+
+      RoomService.addAttendees($scope.meeting.id, $scope.attendeeList)
+        .then(function (res) {
+          MaskFac.loadingMask(false);
+
+          MaskFac.showMask(MaskFac.success, 'Updating attendees successful.');
+
+          $scope.attendeeList = [];
+
+          $scope.modal.hide();
+        }, function (errRes) {
+          MaskFac.loadingMask(false);
+          MaskFac.showMask(MaskFac.error, 'Error updating attendees. Please try again');
+
+          $scope.attendeeList = [];
+
+          $scope.modal.hide();
+        });
+    } else {
+      $scope.modal.hide();
+
+      $scope.attendeeList = [];
+    }
+  };
+
+  $scope.addAttendee = function(email) {
+      if(email) {
+        $scope.attendeeList.push(email);
+      }
+
+    $scope.attendee.email = '';
+  };
+
+  $scope.onAttendeeDelete = function(email) {
+    $scope.attendeeList.splice($scope.attendeeList.indexOf(email), 1);
   };
 
   $scope.newSubject = {desc: ''};

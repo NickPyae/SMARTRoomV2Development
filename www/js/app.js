@@ -14,7 +14,8 @@ var app = angular.module('smartroom', [
     'app.services',
     'app.factories',
     'app.filters',
-    'jett.ionic.filter.bar'
+    'jett.ionic.filter.bar',
+    'plgn.ionic-segment'
 ]);
 
 app.run(function($ionicPlatform, CredentialService, ServerConfig, AppConfigService, $rootScope, $state, $cordovaNetwork, $ionicPopup) {
@@ -199,7 +200,8 @@ app.config(function($stateProvider, $ionicConfigProvider, $urlRouterProvider, $i
           controller: "ReservationCtrl"
         }
       }
-    }).state('tab.reservation-detail',{
+    })
+    .state('tab.reservation-detail',{
       url: "/reservation-detail/:param",
       cache:false,
       views:{

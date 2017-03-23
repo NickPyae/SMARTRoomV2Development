@@ -7,6 +7,7 @@
 	"cancelschedule":"/mobile/cancelreservation",
 	"confirmschedule":"/mobile/confirmreservation",
   "updatereservation": "/mobile/updatereservation",
+  "addAttendee": "/mobile/addAttendee",
   "extendmeeting": "/mobile/extendresource",
 	"endschedule":"/mobile/endreservation",
 	"search":"/mobile/availableresources",

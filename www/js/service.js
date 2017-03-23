@@ -77,7 +77,16 @@ angular.module('app.services', [])
       return _details;
     }
 
-    function meetingDetails(mId, mMeetingName, mRoomName, mLocation, mSiteID, mStatus, mStart, mEnd, mImg, mFloor, mAttendees, floorName, mReservedDate, xLocation, yLocation, remarks){
+    function serviceDetails(s) {
+      var _details = {};
+      _details.id = s.id;
+      _details.content = s.Content;
+      _details.comment = s.comment;
+      return _details;
+    }
+
+    function meetingDetails(mId, mMeetingName, mRoomName, mLocation, mSiteID, mStatus, mStart, mEnd, mImg, mFloor, mAttendees,
+                            floorName, mReservedDate, xLocation, yLocation, remarks, mServices){
       var _meeting ={};
       _meeting.id = mId;
       _meeting.name = mMeetingName;
@@ -87,9 +96,16 @@ angular.module('app.services', [])
       _meeting.status = mStatus;
       _meeting.attendees = [];
       _meeting.count = "Attendees: ";
-      _meeting.count +=  mAttendees ? mAttendees.length : 'N.A'; //Bug fix here- i can't get Attendees. and length to render at the same time
-      angular.forEach(mAttendees,function(a){
+      _meeting.count +=  mAttendees ? mAttendees.length : '0';
+      angular.forEach(mAttendees, function(a){
         _meeting.attendees.push(attendeeDetails(a));
+      });
+
+      _meeting.services = [];
+      _meeting.sCount = "Services: ";
+      _meeting.sCount +=  mServices ? mServices.length : '0';
+      angular.forEach(mServices, function(s){
+        _meeting.services.push(serviceDetails(s));
       });
 
       _meeting.siteID = mSiteID;
@@ -105,7 +121,9 @@ angular.module('app.services', [])
 
       return _meeting;
     }
-    var cannedAttendees=[{
+
+    // Fake attendees since LH service is not ready yet
+    var fakeAttendees= [{
       "name": "alice",
       "tel" : "+6512345678",
       "email": "alice.ang@ebd.com"
@@ -148,6 +166,111 @@ angular.module('app.services', [])
       "tel" : "+6512345678",
       "email": "kaitlyn.kong@ebd.com"
     }];
+
+    // Fake services since LH service is not ready yet
+    var fakeServices = [
+      {
+        "id": "10018",
+        "AppUser": null,
+        "Content": "Test Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      },
+      {
+        "id": "10019",
+        "AppUser": null,
+        "Content": "Room Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      },
+      {
+        "id": "10020",
+        "AppUser": null,
+        "Content": "TV Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      }, {
+        "id": "10021",
+        "AppUser": null,
+        "Content": "Aircon Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      }, {
+        "id": "10022",
+        "AppUser": null,
+        "Content": "PC Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      }
+      , {
+        "id": "10023",
+        "AppUser": null,
+        "Content": "Washing Machine Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      } ,{
+        "id": "10024",
+        "AppUser": null,
+        "Content": "Door Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      }, {
+        "id": "10025",
+        "AppUser": null,
+        "Content": "Network Service",
+        "comment": "Test 123",
+        "serviceStartTime": "/Date(1489694400000)/",
+        "serviceEndTime": "/Date(1489752000000)/",
+        "StartTime": "04:00",
+        "EndTime": "20:00",
+        "ReservationID": 0,
+        "ServiceID": 0,
+        "service": null
+      }
+    ];
+
     //for reservation-controller.js
     self.getMeetingInfo = function(id){
 
@@ -194,8 +317,10 @@ angular.module('app.services', [])
           var m = data;
           var status = null;
 
-          //var hwMany = Math.floor(Math.random()* 11 + 1);
-          //m.attendees=cannedAttendees.slice(0, hwMany);
+          // Comment this line 322 fake attendees once LH service is ready to provide real attendees
+          // Just use m.attendees. For now m.attendees is empty array - "Attendees": [] if you console.log(m).
+          m.attendees = fakeAttendees;
+
           if(m.status.toLowerCase() === 'starting') {
             status = 'RESERVED';
           } else if (m.status.toLowerCase() === 'started') {
@@ -204,14 +329,18 @@ angular.module('app.services', [])
             status = 'PENDING ADMIN APPROVAL';
           }
 
-          var myQueriedMeeting = meetingDetails(m.id, m.schedulename, m.roomname,
-            siteName, siteID, status, tConvert(m.StartTime), tConvert(m.EndTime),
-            roomImg, floorplanImage, m.Attendees, floorName, m.Date, xLocation, yLocation, remarks);
-
-          // meetingDetails with fake attendees.
           //var myQueriedMeeting = meetingDetails(m.id, m.schedulename, m.roomname,
-          //	siteName, siteID, status, tConvert(m.StartTime), tConvert(m.EndTime),
-          //			 roomImg, floorplanImage, m.attendees, floorName, m.Date, xLocation, yLocation, '');
+          //  siteName, siteID, status, tConvert(m.StartTime), tConvert(m.EndTime),
+          //  roomImg, floorplanImage, m.Attendees, floorName, m.Date, xLocation, yLocation, remarks);
+
+          // Check this web service (http://192.168.1.121/smartroommobiledata/mobile/schedule?callback=JSON_CALLBACK&scheduleid=MTkxNzMx)
+          // to make sure keys: "Attendees" and "Services" are there and have list of objects
+          // meetingDetails with fake attendees and services.
+          // There is no "Services" key inside LH returned JSON data. It should be something like "Services": [] and add m.Services as last parameter to meetingDetails()
+          // comment this function once LH service is ready to provide real attendees and services and uncomment lines 331 and 332
+          var myQueriedMeeting = meetingDetails(m.id, m.schedulename, m.roomname,
+          	siteName, siteID, status, tConvert(m.StartTime), tConvert(m.EndTime),
+          			 roomImg, floorplanImage, m.attendees, floorName, m.Date, xLocation, yLocation, remarks, fakeServices);
 
           def.resolve(myQueriedMeeting);
         }).
@@ -709,7 +838,8 @@ angular.module('app.services', [])
     },
 
       // Reserving room
-      self.reserveRoom = function(id, _date, start, end, name){
+      self.reserveRoom = function(id, _date, start, end, name, attendees){
+
         var def=$q.defer();
 
         //var useDate = formatDate_YYYY(_date);
@@ -723,6 +853,7 @@ angular.module('app.services', [])
           var encodedEndTime = btoa(end);
           var encodedSubject = btoa(name);
           var encodedRid = btoa(id);
+          var encodedAttendees = btoa(attendees);
         }catch(err){
           def.reject("Invalid characters not allowed");
         }
@@ -739,7 +870,8 @@ angular.module('app.services', [])
               "&EndTime=" + encodedEndTime +
               "&subject=" + encodedSubject +
               "&RoomId=" + encodedRid +
-              "&oid=" + encodedScheduleID;
+              "&oid=" + encodedScheduleID +
+              "&Attendee=" + encodedAttendees;
           } else {
             url = res + "?callback=JSON_CALLBACK&UserId=" + encodedUid +
               "&StartDate=" + encodedStartDate +
@@ -747,14 +879,14 @@ angular.module('app.services', [])
               "&StartTime=" + encodedStartTime +
               "&EndTime=" + encodedEndTime +
               "&subject=" + encodedSubject +
-              "&RoomId=" + encodedRid;
+              "&RoomId=" + encodedRid +
+              "&Attendee=" + encodedAttendees;;
           }
 
           console.log('Reserve room url: ' + url);
 
           $http.jsonp(url)
             .success(function (data, status, headers, config) {
-              console.log('DATA', data);
               if (data.success === true)
               {
                 self.setReservedScheduleID(null);
@@ -794,6 +926,45 @@ angular.module('app.services', [])
           "&scheduleid=" + encodedScheduleId;
 
         console.log('Updating subject url: ' + url);
+
+        $http.jsonp(url)
+          .success(function (data, status, headers, config) {
+            if (data.success === true)
+            {
+              def.resolve();
+            }else{
+              def.reject(JSON.stringify(data));
+            }
+          })
+          .error(function(errRes, status, headers, config){
+            def.reject(errRes);
+          });
+      });
+
+      return def.promise;
+
+    };
+
+
+    self.addAttendees = function(id, attendees){
+      var def = $q.defer();
+
+      try
+      {
+        var encodedUid = btoa(CredentialService.getUid());
+        var encodedScheduleId = btoa(id);
+        var encodedAttendees = btoa(attendees);
+      }catch(err){
+        def.reject("Invalid characters not allowed");
+      }
+
+      ServerConfig.getUrl(ServerConfig.addAttendee).then(function(res){
+
+        var url = res + "?callback=JSON_CALLBACK&userid=" + encodedUid +
+          "&scheduleid=" + encodedScheduleId +
+          "&Attendee=" + encodedAttendees;
+
+        console.log('Updating attendees url: ' + url);
 
         $http.jsonp(url)
           .success(function (data, status, headers, config) {

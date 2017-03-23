@@ -592,7 +592,9 @@ app.controller('SearchCtrl', function ($rootScope, $scope, $state, $stateParams,
         mypopup = $ionicPopup.show({
           //template: '<input type="text" ng-model="reserve.des" placeholder="Please Enter Description"><div field-req ng-hide="reserve.des"></div>',
           template: 'Room: <b>' + name + '</b><br>Date: <b>' + formatDate(param.date) + '</b>' + '</b><br>' + useSlot + '<br><form name="myForm"><input type="text" placeholder="Subject" name="subject" ng-pattern="regex" ng-model="reserve.des" required>' +
-          '<div field-req ng-show="myForm.subject.$error.required"></div>' + '<div invalid-char ng-show="myForm.subject.$error.pattern"></div></form>',
+          '<div field-req ng-show="myForm.subject.$error.required"></div>' + '<div invalid-char ng-show="myForm.subject.$error.pattern"></div>' +
+          '<br><form name="myForm"><input type="text" placeholder="Attendees separated by comma" name="attendees" ng-model="reserve.attendees">' +
+          '</form>',
           title: 'Confirm Reservation ',
           //subTitle: 'Room: <b>' + name + '</b><br>Date: <b>' + formatDate(param.date) + '</b>'+ '</b><br>' + useSlot,
           scope: $scope,
@@ -616,6 +618,17 @@ app.controller('SearchCtrl', function ($rootScope, $scope, $state, $stateParams,
         mypopup.then(function (res) {
           if (res) {
 
+            var attendees = [];
+
+            if($scope.reserve.attendees) {
+              var listOfAttendees = $scope.reserve.attendees.split(/[\s,]+/);
+
+              listOfAttendees.map(function(attendee) {
+                attendees.push(attendee);
+              });
+            }
+
+
             MaskFac.loadingMask(true, 'Processing');
             var selectedSlots = [];
             var todayDate = getFormatDate(param.date);
@@ -636,7 +649,7 @@ app.controller('SearchCtrl', function ($rootScope, $scope, $state, $stateParams,
             var end = selectedSlots[selectedSlots.length - 1].end;
             var subject = res;
 
-            RoomService.reserveRoom(id, todayDate, start, end, subject)
+            RoomService.reserveRoom(id, todayDate, start, end, subject, attendees)
               .then(function (res) {
                 MaskFac.loadingMask(false);
 

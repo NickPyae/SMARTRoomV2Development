@@ -241,7 +241,7 @@ and (-webkit-device-pixel-ratio : 3) {
 /** ion-scroll height for 5-inch and above devices */
 .available-attendees-height {
   margin: 0px;
-  height: 190px;
+  height: 170px;
 }
 
 /** iPhone < 5: */

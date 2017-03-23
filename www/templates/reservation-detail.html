@@ -37,26 +37,80 @@
     <div ng-if="meeting.remarks">
       <a href="#" class="item item-icon-left">
         <i class="icon ion-ios-information-outline"></i>
-        <span>{{ meeting.remarks }}</span>
+        <span class="item-text-wrap">{{ meeting.remarks }}</span>
       </a>
     </div>
-    <!--LARA 11Feb16: added height:66%-->
-		<div class="list card" style="margin:0px;height:58%">
 
-		<ion-item class="item item-divider">
-			<!-- desperate bug fix, i can't get meeting.count to render with other texts, so i added it to the data itself-->
-			<p>{{meeting.count}}</p>
-		</ion-item>
-<!--LARA 11Feb16: added height 85%-->
-		  <ion-scroll style="height:85%" class="available-attendees-height"> <!--to override no scroll of the ion-content-->
-				<ion-item ng-repeat="a in meeting.attendees" href="" ng-click="attendeeInfo(a)" class="item-icon-right">
-					{{$index+1}})&nbsp;{{a.name}}
-					<i ng-if="a.num" class="icon ion-ios7-information-outline"></i>
-				</ion-item>
+    <ion-segment ng-model="categories" full="true"  calm>
+      <ion-segment-button value="attendees">
+        Attendees
+      </ion-segment-button>
+      <ion-segment-button value="services">
+        Services
+      </ion-segment-button>
+    </ion-segment>
 
-		</ion-scroll>
+    <div ng-switch="categories">
+      <div class="list" ng-switch-when="attendees">
+        <ion-item class="item item-divider">
+          <p>{{meeting.count}}</p>
+        </ion-item>
+          <ion-scroll class="available-attendees-height">
+            <ion-item ng-repeat="a in meeting.attendees" href="#" ng-click="attendeeInfo(a)" class="item-icon-right">
+               <span class="item-text-wrap">
+                 {{$index+1}}. &nbsp;{{a.name}}
+               </span>
+            <i ng-if="a.num" class="icon ion-ios7-information-outline"></i>
+            </ion-item>
+          </ion-scroll>
+      </div>
 
-		</div>
+      <div class="list" ng-switch-when="services">
+        <ion-item class="item item-divider">
+          <p>{{meeting.sCount}}</p>
+        </ion-item>
+        <ion-scroll class="available-attendees-height">
+          <ion-item ng-repeat="s in meeting.services" href="#" class="item-icon-right">
+            <span class="item-text-wrap">
+                {{$index+1}}. &nbsp;{{s.content}}
+            </span>
+            <span class="item-note">
+                {{s.comment}}
+            </span>
+          </ion-item>
+        </ion-scroll>
+      </div>
+    </div>
 
 	</ion-content>
 </ion-view>
+
+<script id="modal.html" type="text/ng-template">
+  <div class="modal">
+    <ion-header-bar class="bar bar-header bar-calm" align-title="center">
+      <h1 class="title">Attendees</h1>
+      <div class="button button-clear"></div>
+      <button class="button button-clear" ng-click="addAttendees()">
+        Add
+      </button>
+      <button class="button button-icon icon ion-ios-plus-empty" ng-click="addAttendee(attendee.email)" ng-disabled="attendee.email === ''">
+      </button>
+    </ion-header-bar>
+    <ion-content scroll="true" class="has-header" has-bouncing="false">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Email</span>
+          <input name="email" type="email" ng-model="attendee.email" required>
+        </label>
+      </div>
+
+      <ion-list show-delete="true">
+        <ion-item ng-repeat="email in attendeeList track by $index">
+          {{$index+1}}. &nbsp; {{ email }}
+          <ion-delete-button class="ion-minus-circled"
+                             ng-click="onAttendeeDelete(email)"></ion-delete-button>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </div>
+</script>

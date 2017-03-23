@@ -352,7 +352,9 @@ app.controller('HomeCtrl', function ($rootScope, $scope, $q, $timeout, RoomServi
         template: 'Room: <b>' + name + '</b><br>Date: <b>' + formatedDate() +
         '</b>' + '</b><br>' + useSlot +
         '<br><form name="myForm"><input type="text" placeholder="Subject" name="subject" ng-pattern="regex" ng-model="reserve.desc" required>' +
-        '<div field-req ng-show="myForm.subject.$error.required"></div>'+'<div invalid-char ng-show="myForm.subject.$error.pattern"></div></form>',
+        '<div field-req ng-show="myForm.subject.$error.required"></div>'+'<div invalid-char ng-show="myForm.subject.$error.pattern"></div>' +
+        '<br><form name="myForm"><input type="text" placeholder="Attendees separated by comma" name="attendees" ng-model="reserve.attendees">' +
+        '</form>',
         title: 'Confirm Reservation ',
         scope: $scope,
         buttons: [
@@ -373,7 +375,19 @@ app.controller('HomeCtrl', function ($rootScope, $scope, $q, $timeout, RoomServi
 
       mypopup.then(function (res) {
         if (res) {
+
+          var attendees = [];
+
+          if($scope.reserve.attendees) {
+            var listOfAttendees = $scope.reserve.attendees.split(/[\s,]+/);
+
+            listOfAttendees.map(function(attendee) {
+                attendees.push(attendee);
+            });
+          }
+
           MaskFac.loadingMask(true, 'Processing');
+
           var selectedSlots = [];
           var todayDate = getTodayDate();
 
@@ -387,7 +401,7 @@ app.controller('HomeCtrl', function ($rootScope, $scope, $q, $timeout, RoomServi
           var end = selectedSlots[selectedSlots.length - 1].end;
           var subject = res;
 
-          RoomService.reserveRoom(id, todayDate, start, end, subject)
+          RoomService.reserveRoom(id, todayDate, start, end, subject, attendees)
             .then(function (res) {
               MaskFac.loadingMask(false);
 
@@ -404,7 +418,7 @@ app.controller('HomeCtrl', function ($rootScope, $scope, $q, $timeout, RoomServi
               },1200);
 
             }, function (errRes) {
-              MaskFac.showMask(MaskFac.error, "Error reserving room. Please try again");
+              //MaskFac.showMask(MaskFac.error, "Error reserving room. Please try again");
             });
 
         } else {
